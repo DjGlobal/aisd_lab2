@@ -3,86 +3,79 @@
 
 struct Node {
 	std::string data;
-	int prev, next;
+	Node *prev = nullptr, *next = nullptr;
 };
 
 struct List {
-	Node* a;
-	size_t reserved, size = 0;
-	int head = -1;
+	Node* head = nullptr;
+	//size_t size = 0;
 	List() {
-		reserved = 32;
-		a = new Node[reserved];
-	}
-	List(size_t n0) {
-		reserved = n0;
-		a = new Node[reserved];
 	}
 	List(const List& l) {
-		memcpy_s(a, l.reserved * sizeof(Node), l.a, l.reserved * sizeof(Node));
-		reserved = l.reserved;
-		head = l.head;
-	}
-	void resize() {
-		if (reserved == 0) ++reserved;
-		size_t newSize = reserved * 2;
-
-		Node* b = new Node[newSize];
-		memcpy_s(b, reserved * sizeof(Node), a, reserved * sizeof(Node));
-		reserved = newSize;
-		delete[] a;
-		a = b;
+		Node* temp = l.head;
+		while (temp != nullptr)
+		{
+			Node* ins = add_(temp->data, temp->prev, temp->next);
+			if (head == nullptr) head = ins;
+			temp = temp->next;
+		}
 	}
 	void add(std::string data) {
-		int last = get_last();
-		add_(data, last, -1);
-		if (last >= 0)
-			a[last].next = size - 1;
+		if (head == nullptr) {
+			add_to_beginning(data);
+		}
+		else {
+			Node *last = get_last();
+			Node *newNode = add_(data, last, nullptr);
+			if (last != nullptr)
+				last->next = newNode;
+		}
+		
 
 	}
 	void add_to_beginning(std::string data) {
-		size_t newId = add_(data, -1, head);
-		a[head].prev = newId;
-		head = newId;
+		Node* newNode = add_(data, nullptr, head);
+		if (head != nullptr) head->prev = newNode;
+		head = newNode;
 	}
-	size_t add_(std::string data, int prev, int next) {
-		if (size == reserved) resize();
-		if (size == 0) head = 0;
-		a[size] = { data, prev, next };
-		size++;
-		return size - 1;
+	Node* add_(std::string data, Node *prev, Node *next) {
+		Node *newNode = new Node;
+		newNode->data = data;
+		newNode->prev = prev;
+		newNode->next = next;
+		return newNode;
 	}
-	int get_last() {
-		if (head == -1)
+	Node* get_last() {
+		if (head == nullptr)
 			return head;
 		else {
-			int t = head;
-			while (a[t].next != -1)
-				t = a[t].next;
+			Node* t = head;
+			while (t->next != nullptr)
+				t = t->next;
 			return t;
 		}
 
 	}
 	void print() {
-		if (head == -1)
+		if (head == nullptr)
 			std::cout << "\n";
 		else {
-			int t = head;
-			while (t != -1) {
-				std::cout << a[t].data << " ";
-				t = a[t].next;
+			Node* t = head;
+			while (t != nullptr) {
+				std::cout << t->data << " ";
+				t = t->next;
 			}
 		}
 
 	}
 	void print_from_end() {
-		if (head == -1)
+		if (head == nullptr)
 			std::cout << "\n";		
 		else {
-			int t = get_last();
-			while (t != -1) {
-				std::cout << a[t].data << " ";
-				t = a[t].prev;
+			Node* t = get_last();
+			while (t != nullptr) {
+				std::cout << t->data << " ";
+				t = t->prev;
 			}
 		}
 
