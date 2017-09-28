@@ -82,6 +82,7 @@ struct List {
 	}
 };
 char lookNext();
+List sortTheList(List);
 
 int main()
 {
@@ -105,10 +106,28 @@ int main()
 	std::cout << "\nPRINT FROM END\n";
 	l.print_from_end();
 	std::cout << "\n\n";
+
+	std::cout << "\n\nNOW I WILL SORT THE LIST, BOI\n";
+	List newL = sortTheList(l);
+	newL.print();
 	system("pause");
 	return 0;
 }
 
+List sortTheList(List l) {
+	List even, uneven;
+	Node* t = l.head;
+	while (t != nullptr)
+	{
+		if (t->data.length() % 2 == 0)
+			even.add(t->data);
+		else
+			uneven.add(t->data);
+		t = t->next;
+	}
+	even.get_last()->next = uneven.head;
+	return even;
+}
 char lookNext() {
 	char t = std::cin.get();
 	std::cin.unget();
